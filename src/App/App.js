@@ -3,10 +3,22 @@ import Pagination from "react-js-pagination";
 import "bootstrap/dist/css/bootstrap.min.css";
 import GuestItem from "../GuestItem/GuestItem";
 import "./App.css";
-import UserCount from "../UserCount";
+// import UserCount from "../UserCount";
 
 //Usefake server
 class App extends Component {
+  state = {
+    guests: [],
+    filtered_guests: [],
+    pageResults: [],
+    value: "",
+    error: null,
+    currentPage: 1,
+    activePage: 1,
+    guestsPerPage: 5,
+    currentGuest: [],
+  };
+
   componentDidMount() {
     fetch("http://localhost:5000/guests")
       .then((res) => res.json())
@@ -31,18 +43,6 @@ class App extends Component {
         }
       );
   }
-
-  state = {
-    guests: [],
-    filtered_guests: [],
-    pageResults: [],
-    value: "",
-    error: null,
-    currentPage: 1,
-    activePage: 1,
-    guestsPerPage: 5,
-    currentGuest: [],
-  };
   //Changing guest status
   changeUserStatus = (index) => (event) => {
     let changedUsers = this.state.guests.map((guest) => {
@@ -102,6 +102,14 @@ class App extends Component {
       data = filtered_guests;
     }
 
+    const renderWarningMsg = () => {
+      if (filtered_guests.length == 0) {
+        return <span style={{ color: "red" }}>You find no user! </span>;
+      } else {
+        return <span style={{ color: "blue" }}>You find </span>;
+      }
+    };
+
     //Calculate guests per page, set current page
     const indexOfLastGuest = activePage * guestsPerPage;
     const indexOfFirstGuest = indexOfLastGuest - guestsPerPage;
@@ -112,13 +120,14 @@ class App extends Component {
       <div className="main-wrapper">
         <div>
           <h1> Guest manager </h1>
+
           <hr />
         </div>
         <div className="main-form">
           <section>
             <form action="">
               <h1 id="no-guests">
-                <UserCount filtered_guests={filtered_guests} />
+                {/* <UserCount filtered_guests={filtered_guests} /> */}
               </h1>
 
               <p className="warning2"></p>
@@ -133,7 +142,11 @@ class App extends Component {
                   onChange={changeHandler}
                 />
                 <label className="label" htmlFor="name">
-                  Mrs./Ms. Total:<span>{filtered_guests.length}</span>
+                  Mrs./Ms. Total:
+                  <span>
+                    {renderWarningMsg()}
+                    {filtered_guests.length}
+                  </span>
                 </label>
               </div>
             </form>

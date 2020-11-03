@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import Pagination from "react-js-pagination";
-import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/css/bootstrap.css";
 import GuestItem from "../GuestItem/GuestItem";
+import FilteredGuests from "./FilteredGuests/FilteredGuests";
 import "./App.css";
-// import UserCount from "../UserCount";
 
 //Usefake server
 class App extends Component {
@@ -43,6 +43,7 @@ class App extends Component {
         }
       );
   }
+
   //Changing guest status
   changeUserStatus = (index) => (event) => {
     let changedUsers = this.state.guests.map((guest) => {
@@ -103,7 +104,7 @@ class App extends Component {
     }
 
     const renderWarningMsg = () => {
-      if (filtered_guests.length == 0) {
+      if (filtered_guests.length === 0) {
         return <span style={{ color: "red" }}>You find no user! </span>;
       } else {
         return <span style={{ color: "blue" }}>You find </span>;
@@ -117,18 +118,31 @@ class App extends Component {
     const paginate = (pageNumber) => currentPage(pageNumber);
 
     return (
-      <div className="main-wrapper">
+      <div className="wrapper">
         <div>
           <h1> Guest manager </h1>
-
           <hr />
         </div>
-        <div className="main-form">
+
+        <ul className="navigation">
+          <li>
+            <a href="#">Home</a>
+          </li>
+          <li>
+            <a href="#">About</a>
+          </li>
+          <li>
+            <a href="#">Products</a>
+          </li>
+          <li>
+            <a href="#">Contact</a>
+          </li>
+        </ul>
+
+        <div className="main">
           <section>
             <form action="">
-              <h1 id="no-guests">
-                {/* <UserCount filtered_guests={filtered_guests} /> */}
-              </h1>
+              <h3 id="no-guests">Find your Guest!</h3>
 
               <p className="warning2"></p>
               <div className="input-container">
@@ -151,31 +165,49 @@ class App extends Component {
               </div>
             </form>
           </section>
-
-          <div className="guest-list">
-            {currentGuest.map((guest) => {
-              return (
-                <GuestItem
-                  key={guest.user._id}
-                  changeStatus={changeUserStatus}
-                  guest={guest}
-                />
-              );
+        </div>
+        <div className="aside-wrapper">
+          <div>
+            {data.map((guest) => {
+              if (filtered_guests.length > 0) {
+                return (
+                  <FilteredGuests
+                    key={guest.user._id}
+                    changeStatus={changeUserStatus}
+                    guest={guest}
+                  />
+                );
+              }
             })}
           </div>
-        </div>
+          <div className="guest-wrapper">
+            <div className="main-form">
+              <div className="guest-list">
+                {currentGuest.map((guest) => {
+                  return (
+                    <GuestItem
+                      key={guest.user._id}
+                      changeStatus={changeUserStatus}
+                      guest={guest}
+                    />
+                  );
+                })}
+              </div>
+            </div>
 
-        <nav id="pagination-div">
-          <Pagination
-            itemClass="page-item" //custom style
-            linkClass="page-link" //custom style
-            activePage={this.state.activePage}
-            itemsCountPerPage={guestsPerPage}
-            totalItemsCount={guests.length}
-            paginate={paginate}
-            onChange={this.handlePageChange.bind(this)}
-          />
-        </nav>
+            <nav id="pagination-div">
+              <Pagination
+                itemClass="page-item" //custom style
+                linkClass="page-link" //custom style
+                activePage={this.state.activePage}
+                itemsCountPerPage={guestsPerPage}
+                totalItemsCount={guests.length}
+                paginate={paginate}
+                onChange={this.handlePageChange.bind(this)}
+              />
+            </nav>
+          </div>
+        </div>
       </div>
     );
   };
